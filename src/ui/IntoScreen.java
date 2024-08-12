@@ -7,23 +7,21 @@ import java.awt.image.BufferedImage;
 
 import util.ImageLoader;
 
-public class IntoScreen {
+public class IntoScreen extends ScreenClass{
     
-    private Dimension screenSize;
     protected BufferedImage img;
 
     public IntoScreen(int screenW, int screenH){
-        this.screenSize = new Dimension(screenW, screenH);
+        super(screenW, screenH);
         img = ImageLoader.loadImage("assets/IntroScreen.png");
     }
 
-    public void drawIntroScreen(Graphics2D g2){
+    @Override
+    public void drawScreen(Graphics2D g2){
         g2.drawImage(img, 0, 0, screenSize.width, screenSize.height, null);
-
-        // g2.setColor(Color.orange);
-        // g2.fillRect(500, 600, 300, 150);
     }
 
+    @Override
     public boolean clicked(double x, double y){
 		boolean clicked = false;
 		

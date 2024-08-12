@@ -7,9 +7,8 @@ import java.awt.image.BufferedImage;
 import java.awt.Font;
 import util.ImageLoader;
 
-public class SellingScreen {
+public class SellingScreen extends ScreenClass{
 
-    private Dimension screenSize;
     protected BufferedImage img;
 
     private int carrotReady;
@@ -20,7 +19,7 @@ public class SellingScreen {
     private String text;
 
     public SellingScreen(int screenW, int screenH, int carrotReady, int lettuceReady, int cornReady, int tomatoReady) {
-        this.screenSize = new Dimension(screenW, screenH);
+        super(screenW, screenH);
         img = ImageLoader.loadImage("assets/sellingScreen.png");
         this.carrotReady = carrotReady;
         this.lettuceReady = lettuceReady;
@@ -28,7 +27,8 @@ public class SellingScreen {
         this.tomatoReady = tomatoReady;
     }
 
-    public void drawSellingScreen(Graphics2D g2) {
+    @Override
+    public void drawScreen(Graphics2D g2) {
         g2.drawImage(img, 0, 0, screenSize.width, screenSize.height, null);
 
         g2.setColor(new Color(0, 0, 0, 200));
@@ -44,6 +44,7 @@ public class SellingScreen {
         g2.drawString("Corn: " + cornReady, 650, 50);
     }
 
+    @Override
     public boolean clicked(double x, double y) {
         return x > 500 && x < 800 && y > 600 && y < 750;
     }

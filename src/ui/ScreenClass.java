@@ -10,11 +10,26 @@ import util.ImageLoader;
 
 public class ScreenClass {
     
-    private Dimension screenSize;
+    protected Dimension screenSize;
     protected BufferedImage img;
 
-    public ScreenClass (){
-
+    public ScreenClass (int screenW, int screenH){
+        this.screenSize = new Dimension(screenW, screenH);
     }
 
+    public void drawScreen(Graphics2D g2){
+    }
+
+    public boolean clicked(double x, double y){
+		boolean clicked = false;
+		return clicked;
+	}
+
+    public boolean confirmClick(double mouseX, double mouseY) {
+        return false;
+    }
+
+    public boolean cancelClick(double mouseX, double mouseY) {
+        return false;
+    }
 }

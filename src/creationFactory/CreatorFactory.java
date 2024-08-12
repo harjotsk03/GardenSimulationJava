@@ -12,8 +12,13 @@ import sidebar.SidebarTool;
 import sidebar.SimpleSidebar;
 import sidebar.Tomato;
 import sidebar.WaterCan;
+import ui.ConfirmScreen;
 import ui.IconButton;
+import ui.InstructionScreen;
 import ui.Instructions;
+import ui.IntoScreen;
+import ui.PausedScreen;
+import ui.ScreenClass;
 
 public class CreatorFactory {
     
@@ -40,6 +45,22 @@ public class CreatorFactory {
 
     public GardenObject createGardenObject(String type, int x, int y, double scale){
         return null;
+    }
+
+    public ScreenClass createScreen(String type, int x, int y){
+        ScreenClass screen = null;
+
+        if(type == "intro"){
+            screen = new IntoScreen(x, y);
+        }else if(type == "paused"){
+            screen = new PausedScreen(x, y);
+        }else if(type == "instruction"){
+            screen = new InstructionScreen(x, y);
+        }else if(type == "confirm"){
+            screen = new ConfirmScreen(x, y);
+        }
+
+        return screen;
     }
 
     public Garden createGarden(String img){

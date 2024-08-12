@@ -7,22 +7,23 @@ import java.awt.image.BufferedImage;
 
 import util.ImageLoader;
 
-public class ConfirmScreen {
+public class ConfirmScreen extends ScreenClass{
     
-    private Dimension screenSize;
     protected BufferedImage img;
 
     public ConfirmScreen(int screenW, int screenH){
-        this.screenSize = new Dimension(screenW, screenH);
+        super(screenW, screenH);
         img = ImageLoader.loadImage("assets/areYouSureScreen.png");
     }
 
-    public void drawInstructionScreen(Graphics2D g2){
+    @Override
+    public void drawScreen(Graphics2D g2){
         g2.drawImage(img, 0, 0, screenSize.width, screenSize.height, null);
         g2.setColor(Color.red);
         g2.fillRect(800, 600, (int) screenSize.getWidth(), 750);
     }
 
+    @Override
     public boolean confirmClick(double x, double y){
 		boolean clicked = false;
 		
@@ -33,6 +34,7 @@ public class ConfirmScreen {
 		return clicked;
 	}
 
+    @Override
     public boolean cancelClick(double x, double y) {
         boolean clicked = false;
 		

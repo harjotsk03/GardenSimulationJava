@@ -48,6 +48,7 @@ import ui.InstructionScreen;
 import ui.Instructions;
 import ui.IntoScreen;
 import ui.PausedScreen;
+import ui.ScreenClass;
 import ui.SellingScreen;
 import ui.Sun;
 
@@ -117,11 +118,13 @@ public class GardenPanel extends JPanel implements ActionListener {
     @SuppressWarnings("unused")
     private Minim minim;
 
-    private IntoScreen introScreen;
-    private PausedScreen pausedScreen;
-    private SellingScreen sellingScreen;
-    private InstructionScreen instructionScreen;
-    private ConfirmScreen confirmScreen;
+    private ArrayList<ScreenClass> screens;
+
+    private ScreenClass introScreen;
+    private ScreenClass pausedScreen;
+    private ScreenClass sellingScreen;
+    private ScreenClass instructionScreen;
+    private ScreenClass confirmScreen;
 
     private JFrame frame;
 
@@ -149,6 +152,7 @@ public class GardenPanel extends JPanel implements ActionListener {
 
         DirtArr = new ArrayList<>();
         FenceArr = new ArrayList<>();
+        screens = new ArrayList<>();
 
         createGarden(4, 3);
 
@@ -160,12 +164,10 @@ public class GardenPanel extends JPanel implements ActionListener {
         MyMouseMotionListener mml = new MyMouseMotionListener();
         addMouseMotionListener(mml);
 
-
-
-        introScreen = new IntoScreen(W_WIDTH, W_HEIGHT);
-        pausedScreen = new PausedScreen(W_WIDTH, W_HEIGHT);
-        instructionScreen = new InstructionScreen(W_WIDTH, W_HEIGHT);
-        confirmScreen = new ConfirmScreen(W_WIDTH, W_HEIGHT);
+        screens.add(creatorFactory.createScreen("intro", W_WIDTH, W_HEIGHT));
+        screens.add(creatorFactory.createScreen("paused", W_WIDTH, W_HEIGHT));
+        screens.add(creatorFactory.createScreen("instruction", W_WIDTH, W_HEIGHT));
+        screens.add(creatorFactory.createScreen("confirm", W_WIDTH, W_HEIGHT));
 
         emptyFenceButton = creatorFactory.createIconButton(40, W_HEIGHT - 180, "Empty Fence", "emptyFence");
         woodDecorButton = creatorFactory.createIconButton(40, W_HEIGHT - 140, "Add Wood", "addWood");
@@ -186,9 +188,17 @@ public class GardenPanel extends JPanel implements ActionListener {
         AffineTransform originalTransform = g2.getTransform(); // Save the original transform
 
         if (gameState == 0) {
-            introScreen.drawIntroScreen(g2);
+            for(int i = 0; i < screens.size(); i++){
+                if(screens.get(i) instanceof IntoScreen){
+                    screens.get(i).drawScreen(g2);
+                }
+            }
         } else if (gameState == 1) {
-            instructionScreen.drawInstructionScreen(g2);
+            for(int i = 0; i < screens.size(); i++){
+                if(screens.get(i) instanceof InstructionScreen){
+                    screens.get(i).drawScreen(g2);
+                }
+            }
         }else if(gameState == 2){
 
             garden.drawGarden(g2);
@@ -254,7 +264,11 @@ public class GardenPanel extends JPanel implements ActionListener {
             g2.setTransform(originalTransform);
 
             if(paused){
-                pausedScreen.drawPausedScreen(g2);
+                for(int i = 0; i < screens.size(); i++){
+                    if(screens.get(i) instanceof PausedScreen){
+                        screens.get(i).drawScreen(g2);
+                    }
+                }   
             }
 
             pausePlayButton.drawButton(g2);
@@ -262,7 +276,11 @@ public class GardenPanel extends JPanel implements ActionListener {
         }else if(gameState == 3){
                // sellingScreen.drawSellingScreen(g2);
         }else if(gameState == 4){
-            confirmScreen.drawInstructionScreen(g2);
+            for(int i = 0; i < screens.size(); i++){
+                if(screens.get(i) instanceof ConfirmScreen){
+                    screens.get(i).drawScreen(g2);
+                }
+            }   
         }
     }
     
@@ -431,9 +449,13 @@ public class GardenPanel extends JPanel implements ActionListener {
             mouseY = e.getY();
         
             if(gameState==0){
-                if (introScreen.clicked(mouseX, mouseY)) {
-                    gameState = 1;
-                    repaint();
+                for(int i = 0 ; i < screens.size(); i++){
+                   if(screens.get(i) instanceof IntoScreen) {
+                    if(screens.get(i).clicked(mouseX, mouseY)){
+                        gameState = 1;
+                        repaint();
+                    }
+                   }
                 }
             }else if(gameState == 1){
                 if(instructionScreen.clicked(mouseX, mouseY)){
@@ -474,12 +496,16 @@ public class GardenPanel extends JPanel implements ActionListener {
             }
 
             if(gameState == 4){
-                if(confirmScreen.confirmClick(mouseX, mouseY)){
-                    restartApplication();
-                }else if(confirmScreen.cancelClick(mouseX, mouseY)){
-                    gameState = 2;
-                    repaint();
-                }
+                for(int i = 0; i < screens.size(); i++){
+                    if(screens.get(i) instanceof ConfirmScreen){
+                        if(confirmScreen.confirmClick(mouseX, mouseY)){
+                            restartApplication();
+                        }else if(confirmScreen.cancelClick(mouseX, mouseY)){
+                            gameState = 2;
+                            repaint();
+                        }
+                    }
+                }  
             }
         
             if (gameState == 2) {
