@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.awt.Font;
 import util.ImageLoader;
 
-public class ScreenClass {
+public class ScreenClass implements elementInterface{
     
     protected Dimension screenSize;
     protected BufferedImage img;
@@ -20,6 +20,7 @@ public class ScreenClass {
     public void drawScreen(Graphics2D g2){
     }
 
+    @Override
     public boolean clicked(double x, double y){
 		boolean clicked = false;
 		return clicked;

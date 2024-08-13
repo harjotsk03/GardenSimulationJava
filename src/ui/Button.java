@@ -6,7 +6,7 @@ import util.ImageLoader;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class Button {
+public class Button implements elementInterface{
 
     private PVector pos;
     private int state = 1; // 1 for pause, 2 for play
@@ -33,6 +33,7 @@ public class Button {
         g2.drawImage(img, (int) this.pos.x, (int) this.pos.y, img.getWidth(), img.getHeight(), null);
     }
 
+    @Override
     public boolean clicked(double x, double y) {
         return x > this.pos.x && x < this.pos.x + img.getWidth() &&
                y > this.pos.y && y < this.pos.y + img.getHeight();

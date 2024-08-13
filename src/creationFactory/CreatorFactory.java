@@ -1,6 +1,8 @@
 package creationFactory;
 
 import fenceDecorator.FenceDecorInterface;
+import fenceDecorator.SimpleFence;
+import garden.Fence;
 import garden.Garden;
 import garden.GardenObject;
 import sidebar.Carrot;
@@ -94,7 +96,9 @@ public class CreatorFactory {
         return button;
     }
 
-    public FenceDecorInterface createFenceDecorObect(){
-        return null;
+    public FenceDecorInterface createFenceDecorObect(int x, int y){
+        FenceDecorInterface fence = null;
+        fence = new SimpleFence(x, y);
+        return fence;
     }
 }

@@ -128,6 +128,10 @@ public class Dirt extends GardenObject {
             }else if(daysLeftToGrow == 0){
                 growthStage = 3;
             }
+        }else if(growthStage == 4){
+            if(daysLeftToGrow <= -1){
+                resetDirt();
+            }
         }
     }
 
@@ -211,5 +215,20 @@ public class Dirt extends GardenObject {
 
     public void addDay() {
         currentDay++;
+    }
+
+
+    private void resetDirt() {
+        state = 0;
+        vegetableState = 0;
+        vegetable = "none";
+        currentImage = null;
+        dateOfPlant = 0;
+        daysToGrow = 0;
+        currentDay = 0;
+        growthStage = 0;
+        imageUpdated = false;
+        cloud = null;
+        img = ImageLoader.loadImage("assets/dirt.png");
     }
 }

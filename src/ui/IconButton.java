@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class IconButton {
+public class IconButton implements elementInterface{
 
     private PVector pos;
     private BufferedImage img;
@@ -50,6 +50,7 @@ public class IconButton {
     }
 
 
+    @Override
     public boolean clicked(double x, double y) {
         int scaledWidth = (int) (img.getWidth() * scaleX);
         int scaledHeight = (int) (img.getHeight() * scaleY);

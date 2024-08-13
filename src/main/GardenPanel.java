@@ -145,7 +145,7 @@ public class GardenPanel extends JPanel implements ActionListener {
         lettuce = creatorFactory.createSidebarOject("lettuce", sidebarX, sidebarYStart + (3 * spacing), 1);
         corn = creatorFactory.createSidebarOject("corn", sidebarX, sidebarYStart + (4 * spacing), 1);
         waterCan = creatorFactory.createSidebarOject("watercan", sidebarX, sidebarYStart + (5 * spacing), 1);
-        digger = creatorFactory.createSidebarOject("digger", sidebarX, sidebarYStart + (6 * spacing), 1);
+        digger = creatorFactory.createSidebarOject("digger", sidebarX, sidebarYStart + (6 * spacing), 0.7);
 
         pausePlayButton = new Button(10, 10);
         sun = new Sun();
@@ -174,18 +174,17 @@ public class GardenPanel extends JPanel implements ActionListener {
         bagsDecorButton = creatorFactory.createIconButton(40, W_HEIGHT - 100, "Add Bags", "addBags");
         fullFenceButton = creatorFactory.createIconButton(40, W_HEIGHT - 60, "Full Fence", "fullFence");
 
-        fence = new SimpleFence(300, W_HEIGHT - 100);
+        fence = creatorFactory.createFenceDecorObect(300, W_HEIGHT - 100);
 
         timer = new Timer(30, this);
     }
-
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        AffineTransform originalTransform = g2.getTransform(); // Save the original transform
+        AffineTransform originalTransform = g2.getTransform();
 
         if (gameState == 0) {
             for(int i = 0; i < screens.size(); i++){
@@ -458,10 +457,14 @@ public class GardenPanel extends JPanel implements ActionListener {
                    }
                 }
             }else if(gameState == 1){
-                if(instructionScreen.clicked(mouseX, mouseY)){
-                    gameState = 2;
-                    timer.start();
-                    repaint();
+                for(int i = 0 ; i < screens.size(); i++){
+                   if(screens.get(i) instanceof InstructionScreen) {
+                    if(screens.get(i).clicked(mouseX, mouseY)){
+                        gameState = 2;
+                        timer.start();
+                        repaint();
+                    }
+                   }
                 }
             }
 
