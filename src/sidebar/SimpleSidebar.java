@@ -24,8 +24,9 @@ public class SimpleSidebar {
     public void drawSidebar(Graphics2D g2){
         AffineTransform transform = g2.getTransform();
 		g2.translate(xPos, yPos);
-		g2.scale(sca*1.5, sca*2.25);
 
+        g2.scale(sca*1.5, sca*2.25);
+		
         g2.drawImage(img, -img.getWidth() / 2, -img.getHeight() / 2, null);
 
 		g2.setTransform(transform);

@@ -21,6 +21,11 @@ public class IconButton implements elementInterface{
         this.img = ImageLoader.loadImage("assets/instructionsBG.png");
         this.scaleX = 0.2;
         this.scaleY = 0.3;
+
+        if(text == "Sell Crops"){
+            this.scaleX = 0.2 * 2;
+            this.scaleY = 0.3 * 2;
+        }
         this.text = text;
     }
 

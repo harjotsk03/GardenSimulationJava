@@ -1,5 +1,7 @@
 package creationFactory;
 
+import java.util.ArrayList;
+
 import fenceDecorator.FenceDecorInterface;
 import fenceDecorator.SimpleFence;
 import garden.Fence;
@@ -21,6 +23,7 @@ import ui.Instructions;
 import ui.IntoScreen;
 import ui.PausedScreen;
 import ui.ScreenClass;
+import ui.VegeShow;
 
 public class CreatorFactory {
     
@@ -91,6 +94,10 @@ public class CreatorFactory {
             button = new IconButton(x,y, text);
         }else if(type == "fullFence"){
             button = new IconButton(x,y, text);
+        }else if(type == "sellButton"){
+            button = new IconButton(x,y, text);
+        }else if(type == " "){
+            button = new IconButton(x,y, text);
         }
 
         return button;
@@ -100,5 +107,19 @@ public class CreatorFactory {
         FenceDecorInterface fence = null;
         fence = new SimpleFence(x, y);
         return fence;
+    }
+
+    public ArrayList createArrayList(){
+        ArrayList arrayList = new ArrayList<>();
+
+        return arrayList;
+    }
+
+    public VegeShow createVegeUI(int x, int y, int scale){
+        VegeShow showUI = null;
+
+        showUI = new VegeShow(x, y, scale);
+
+        return showUI;
     }
 }

@@ -51,7 +51,9 @@ import ui.PausedScreen;
 import ui.ScreenClass;
 import ui.SellingScreen;
 import ui.Sun;
+import ui.VegeShow;
 
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import util.MinimHelper;
@@ -93,6 +95,8 @@ public class GardenPanel extends JPanel implements ActionListener {
     private Timer timer;
     private int day = 1;
 
+    private VegeShow showUIArea;
+
     private int gameState = 0;
     private Boolean paused = false;
     private Button pausePlayButton;
@@ -101,6 +105,7 @@ public class GardenPanel extends JPanel implements ActionListener {
     private boolean hasDug = false;
     private boolean hasPlanted = false;
     private boolean toolActive = false;
+    private boolean readyToHarvest = false;
 
     private int carrotReady = 0;
     private int lettuceReady = 0;
@@ -112,6 +117,8 @@ public class GardenPanel extends JPanel implements ActionListener {
     private IconButton woodDecorButton;
     private IconButton bagsDecorButton;
     private IconButton fullFenceButton;
+
+    private IconButton sellButton = null;
 
     private boolean drawSparkle = false;
 
@@ -148,11 +155,13 @@ public class GardenPanel extends JPanel implements ActionListener {
         digger = creatorFactory.createSidebarOject("digger", sidebarX, sidebarYStart + (6 * spacing), 0.7);
 
         pausePlayButton = new Button(10, 10);
+
+        showUIArea = creatorFactory.createVegeUI(W_WIDTH - 235, 4, 1);
         sun = new Sun();
 
-        DirtArr = new ArrayList<>();
-        FenceArr = new ArrayList<>();
-        screens = new ArrayList<>();
+        DirtArr = creatorFactory.createArrayList();
+        FenceArr = creatorFactory.createArrayList();
+        screens = creatorFactory.createArrayList();
 
         createGarden(4, 3);
 
@@ -210,10 +219,7 @@ public class GardenPanel extends JPanel implements ActionListener {
 
             fence.showFence(g2);
 
-            emptyFenceButton.drawButton(g2);
-            woodDecorButton.drawButton(g2);
-            bagsDecorButton.drawButton(g2);
-            fullFenceButton.drawButton(g2);
+
 
             g2.setColor(new Color(0, 0, 0, light));
             g2.fillRect(0, 0, W_WIDTH, W_HEIGHT);
@@ -229,8 +235,18 @@ public class GardenPanel extends JPanel implements ActionListener {
             corn.drawObject(g2);
             waterCan.drawObject(g2);
             digger.drawObject(g2);        
-        
 
+            emptyFenceButton.drawButton(g2);
+            woodDecorButton.drawButton(g2);
+            bagsDecorButton.drawButton(g2);
+            fullFenceButton.drawButton(g2);
+
+            if(sellButton != null){
+                sellButton.drawButton(g2);
+            }
+
+            showUIArea.drawButton(g2);
+        
             if (instructions != null) {
                 instructions.displayInstruction(g2);
             }
@@ -245,19 +261,19 @@ public class GardenPanel extends JPanel implements ActionListener {
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.setColor(Color.WHITE);
             int stringWidth = g2.getFontMetrics().stringWidth(timeString);
-            g2.drawString(timeString, W_WIDTH - stringWidth - 50, 50);
-            g2.drawString("Day: " + day, W_WIDTH - 50 - stringWidth, 80);
+            g2.drawString(timeString, W_WIDTH - 40 - stringWidth, 40);
+            g2.drawString("Day " + day, W_WIDTH - 40 - stringWidth, 60);
 
             g2.setFont(new Font("Arial", Font.PLAIN, 15));
-            g2.drawString("Carrots: " + carrotReady, W_WIDTH - 150 - stringWidth, 50);
-            g2.drawString("Lettuce: " + lettuceReady, W_WIDTH - 150 - stringWidth, 80);
-            g2.drawString("Tomato: " + tomatoReady, W_WIDTH - 150 - stringWidth, 110);
-            g2.drawString("Corn: " + cornReady, W_WIDTH - 150 - stringWidth, 140);
+            g2.drawString("Carrots: " + carrotReady, W_WIDTH - 150 - stringWidth, 40);
+            g2.drawString("Lettuce: " + lettuceReady, W_WIDTH - 150 - stringWidth, 60);
+            g2.drawString("Tomato: " + tomatoReady, W_WIDTH - 150 - stringWidth, 80);
+            g2.drawString("Corn: " + cornReady, W_WIDTH - 150 - stringWidth, 100);
 
             AffineTransform treeSet = g2.getTransform();
             g2.translate(-100, -100);
             g2.scale(0.5, 0.5);
-            sun.drawSun(g2, 300, 300, 100, 6);
+            // sun.drawSun(g2, 300, 300, 100, 6);
             g2.setTransform(treeSet);
 
             g2.setTransform(originalTransform);
@@ -288,10 +304,17 @@ public class GardenPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if(gameState == 2){
+            boolean instructionsDisplayed = false;
             for(int i = 0; i < DirtArr.size(); i++){
                 Dirt currentDirt = DirtArr.get(i);
     
                 int counter = 0;
+                int readyHarvester = 0;
+
+                if(currentDirt.getGrowthStage() == 3){
+                    readyHarvester ++;
+                    System.out.println("ready to harvest");
+                }
     
                 if(currentDirt.getDirtState() == 1){
                     counter++;
@@ -301,6 +324,15 @@ public class GardenPanel extends JPanel implements ActionListener {
                     hasDug = true;
                     instructions = null;
                 }
+
+                if(readyHarvester > 0 && readyHarvester <= 1){
+                    readyToHarvest = true;
+                }
+            }
+            // Show instructions only if not already displayed and if ready to harvest
+            if (readyToHarvest && !instructionsDisplayed) {
+                instructions = new Instructions(W_WIDTH / 2 + 150, W_HEIGHT - 100, "Grab the harvest tool and harvest your sparkling crops!", "digger");
+                instructionsDisplayed = true; // Set the flag to true once instructions are displayed
             }
     
             if(!paused){
@@ -339,6 +371,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                     if (currentDirt.getGrowthStage() == 3) {
                         if (currentDirt.isColliding(digger)) {
                             currentDirt.setGrowthStage(4);
+                            readyToHarvest = false;
                             if(currentDirt.getVegetableState() == 1){
                                 carrotReady ++;
                             }else if(currentDirt.getVegetableState() == 2){
@@ -412,14 +445,13 @@ public class GardenPanel extends JPanel implements ActionListener {
                 instructions = new Instructions(W_WIDTH / 2 + 150, W_HEIGHT - 100, "Water your garden!", "waterCan");
                 timeOfDay = timeOfDay;
             }else if(!hasPlanted){
-                instructions = new Instructions(W_WIDTH / 2 + 150, W_HEIGHT - 100, "Plant the carrots in the dug up places!", "carrots");
+                instructions = new Instructions(W_WIDTH / 2 + 150, W_HEIGHT - 100, "Pick any vegetable and hover over\n the dug up places to plant!", "carrots");
                 timeOfDay = timeOfDay;
             }
             else{
                 timeOfDay = (timeOfDay + incr) % (24 * 60);
             }
-    
-    
+
             if(timeOfDay == 840){
                 cloud = null;
             }
@@ -435,7 +467,10 @@ public class GardenPanel extends JPanel implements ActionListener {
         }
 
         if(carrotReady > 12 || lettuceReady > 12 || tomatoReady > 12 || cornReady > 12){
-            this.paused = true;
+            if(sellButton == null){
+                sellButton = creatorFactory.createIconButton(W_WIDTH / 2 - 100, 20, "Sell Crops", "sellButton");
+                repaint();
+            }
         }
 
         repaint();
