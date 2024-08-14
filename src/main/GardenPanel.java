@@ -108,10 +108,10 @@ public class GardenPanel extends JPanel implements ActionListener {
     private boolean toolActive = false;
     private boolean readyToHarvest = false;
 
-    private int carrotReady = 0;
-    private int lettuceReady = 0;
-    private int cornReady = 0;
-    private int tomatoReady = 0;
+    private int carrotReady;
+    private int lettuceReady;
+    private int cornReady;
+    private int tomatoReady;
 
     FenceDecorInterface fence;
     private IconButton emptyFenceButton;
@@ -191,6 +191,11 @@ public class GardenPanel extends JPanel implements ActionListener {
 
         MyMouseMotionListener mml = new MyMouseMotionListener();
         addMouseMotionListener(mml);
+
+        carrotReady = 0;
+        lettuceReady = 0;
+        cornReady = 0;
+        tomatoReady = 0;
 
         screens.add(creatorFactory.createScreen("intro", W_WIDTH, W_HEIGHT));
         screens.add(creatorFactory.createScreen("paused", W_WIDTH, W_HEIGHT));
@@ -315,6 +320,11 @@ public class GardenPanel extends JPanel implements ActionListener {
 
         }else if(gameState == 3){
 
+            System.out.println(carrotReady);
+            System.out.println(lettuceReady);
+            System.out.println(cornReady);
+            System.out.println(tomatoReady);
+
             sellingScreen.drawScreen(g2);
             backButton.drawButton(g2);
             increaseCarrot.drawButton(g2);
@@ -353,7 +363,6 @@ public class GardenPanel extends JPanel implements ActionListener {
 
                 if(currentDirt.getGrowthStage() == 3){
                     readyHarvester ++;
-                    System.out.println("ready to harvest");
                 }
     
                 if(currentDirt.getDirtState() == 1){
@@ -398,14 +407,16 @@ public class GardenPanel extends JPanel implements ActionListener {
                     waterCan.setPos(mouseX, mouseY);
                 }
         
-                for (int i = 0; i < DirtArr.size(); i++) {
+                
+            }
+
+            for (int i = 0; i < DirtArr.size(); i++) {
                     Dirt currentDirt = DirtArr.get(i);
                     currentDirt.update();
         
                     if (currentDirt.getDirtState() == 0) {
                         if (currentDirt.isColliding(pick)) {
                             currentDirt.setDirtImg(1);
-                            Sound.play("assets/grass2.wav");
                         }
                     }
         
@@ -441,7 +452,6 @@ public class GardenPanel extends JPanel implements ActionListener {
                         }
                     }
                 }
-            }
             
     
             for(int i=0; i < DirtArr.size(); i++){

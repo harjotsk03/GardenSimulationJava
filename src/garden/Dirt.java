@@ -241,11 +241,13 @@ public class Dirt extends GardenObject {
         boolean isColliding = getOutline().intersects(tool.getBoundingBox()) &&
                               tool.getOutline().intersects(getBoundingBox());
         
-        if (isColliding && !wasColliding && vegetableState == 0) {
-            Sound.play("assets/netherwart4.wav"); // Play sound when first colliding
+        if (isColliding && !wasColliding && state == 0 && vegetableState == 0) {
+            Sound.play("assets/netherwart4.wav");
+        }else if(isColliding && !wasColliding && state == 1 && vegetableState == 0){
+            Sound.play("assets/grass2.wav");
         }
         
-        wasColliding = isColliding; // Update the collision state
+        wasColliding = isColliding;
 
         return isColliding;
     }
