@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class ImageLoader {
 
@@ -29,4 +30,8 @@ public class ImageLoader {
 		}
 		return true;
 	}
+
+	public static ImageIcon loadGif(String gifFile) {
+        return new ImageIcon(gifFile);
+    }
 }

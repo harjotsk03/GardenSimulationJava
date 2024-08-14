@@ -23,8 +23,11 @@ public class IconButton implements elementInterface{
         this.scaleY = 0.3;
 
         if(text == "Sell Crops"){
-            this.scaleX = 0.2 * 2;
-            this.scaleY = 0.3 * 2;
+            this.scaleX = 0.2;
+            this.scaleY = 0.3;
+        }else if(text == "+" || text == "-"){
+            this.scaleX = 0.1;
+            this.scaleY = 0.3;
         }
         this.text = text;
     }
@@ -41,14 +44,23 @@ public class IconButton implements elementInterface{
         
         // Restore the font and transform state before drawing text
         g2.setTransform(originalTransform);
-        g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        if(this.text == "+" || this.text == "-"){
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));    
+        }else{
+            g2.setFont(new Font("Arial", Font.PLAIN, 12));
+        }
         g2.setColor(Color.BLACK);
 
         // Calculate text position
         int stringWidth = g2.getFontMetrics().stringWidth(this.text);
         int stringHeight = g2.getFontMetrics().getHeight();
         int textX = (int) (this.pos.x + (img.getWidth() * scaleX) / 2 - stringWidth / 2);
-        int textY = (int) (this.pos.y + (img.getHeight() * scaleY) / 2 + stringHeight / 2 - 3);
+        int textY = 0;
+        if(this.text == "+" || this.text == "-"){
+            textY = (int) (this.pos.y + (img.getHeight() * scaleY) / 2 + stringHeight / 2 - 6);
+        }else{
+            textY = (int) (this.pos.y + (img.getHeight() * scaleY) / 2 + stringHeight / 2 - 3);
+        }
 
         // Draw the text
         g2.drawString(this.text, textX, textY);

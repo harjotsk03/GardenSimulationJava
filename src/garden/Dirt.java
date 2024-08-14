@@ -4,7 +4,10 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+
+import sidebar.SidebarTool;
 import util.ImageLoader;
+import util.Sound;
 
 public class Dirt extends GardenObject {
     private int state = 0;
@@ -17,6 +20,7 @@ public class Dirt extends GardenObject {
     private int growthStage = 0;
     private boolean imageUpdated = false;
     private Sparkle cloud = null;
+    private boolean wasColliding; // Track the previous collision state
     
     private BufferedImage[] carrotImages = new BufferedImage[5];
     private BufferedImage[] tomatoImages = new BufferedImage[5];
@@ -230,5 +234,19 @@ public class Dirt extends GardenObject {
         imageUpdated = false;
         cloud = null;
         img = ImageLoader.loadImage("assets/dirt.png");
+    }
+
+    @Override
+    public boolean isColliding(SidebarTool tool) {
+        boolean isColliding = getOutline().intersects(tool.getBoundingBox()) &&
+                              tool.getOutline().intersects(getBoundingBox());
+        
+        if (isColliding && !wasColliding && vegetableState == 0) {
+            Sound.play("assets/netherwart4.wav"); // Play sound when first colliding
+        }
+        
+        wasColliding = isColliding; // Update the collision state
+
+        return isColliding;
     }
 }

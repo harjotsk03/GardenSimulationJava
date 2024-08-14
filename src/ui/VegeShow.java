@@ -25,7 +25,7 @@ public class VegeShow implements elementInterface{
         AffineTransform originalTransform = g2.getTransform();        
         // Apply transformations for the image
         g2.translate(xPos, yPos);
-        g2.scale(0.8, 1);
+        g2.scale(1, 1);
         g2.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), null);
         
         // Restore the font and transform state before drawing text

@@ -57,6 +57,7 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import util.MinimHelper;
+import util.Sound;
 import util.Util;
 
 public class GardenPanel extends JPanel implements ActionListener {
@@ -129,7 +130,25 @@ public class GardenPanel extends JPanel implements ActionListener {
 
     private ScreenClass introScreen;
     private ScreenClass pausedScreen;
-    private ScreenClass sellingScreen;
+
+
+    private ScreenClass sellingScreen = null;
+    private IconButton backButton = null;
+    private IconButton increaseCarrot = null;
+    private IconButton increaseLettuce = null;
+    private IconButton increaseCorn = null;
+    private IconButton increaseTomato = null;
+    private IconButton decreaseCarrot = null;
+    private IconButton decreaseLettuce = null;
+    private IconButton decreaseCorn = null;
+    private IconButton decreaseTomato = null;
+    private IconButton sellCropsButton = null;
+    private int carrotsSell = 0;
+    private int lettuceSell = 0;
+    private int cornSell = 0;
+    private int tomatoSell = 0;
+
+
     private ScreenClass instructionScreen;
     private ScreenClass confirmScreen;
 
@@ -156,7 +175,7 @@ public class GardenPanel extends JPanel implements ActionListener {
 
         pausePlayButton = new Button(10, 10);
 
-        showUIArea = creatorFactory.createVegeUI(W_WIDTH - 235, 4, 1);
+        showUIArea = creatorFactory.createVegeUI(W_WIDTH - 250, 25, 1);
         sun = new Sun();
 
         DirtArr = creatorFactory.createArrayList();
@@ -183,9 +202,14 @@ public class GardenPanel extends JPanel implements ActionListener {
         bagsDecorButton = creatorFactory.createIconButton(40, W_HEIGHT - 100, "Add Bags", "addBags");
         fullFenceButton = creatorFactory.createIconButton(40, W_HEIGHT - 60, "Full Fence", "fullFence");
 
+        createSellingScreen();
+
         fence = creatorFactory.createFenceDecorObect(300, W_HEIGHT - 100);
 
         timer = new Timer(30, this);
+
+        Sound.play("assets/gentle-fields-194622.wav");
+
     }
 
     public void paintComponent(Graphics g) {
@@ -218,8 +242,6 @@ public class GardenPanel extends JPanel implements ActionListener {
             }
 
             fence.showFence(g2);
-
-
 
             g2.setColor(new Color(0, 0, 0, light));
             g2.fillRect(0, 0, W_WIDTH, W_HEIGHT);
@@ -261,14 +283,15 @@ public class GardenPanel extends JPanel implements ActionListener {
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.setColor(Color.WHITE);
             int stringWidth = g2.getFontMetrics().stringWidth(timeString);
-            g2.drawString(timeString, W_WIDTH - 40 - stringWidth, 40);
-            g2.drawString("Day " + day, W_WIDTH - 40 - stringWidth, 60);
+            g2.drawString(timeString, W_WIDTH - 30 - stringWidth, 60);
+            g2.setFont(new Font("Arial", Font.PLAIN, 12));
+            g2.drawString("Day " + day, W_WIDTH - 30 - stringWidth, 78);
 
-            g2.setFont(new Font("Arial", Font.PLAIN, 15));
-            g2.drawString("Carrots: " + carrotReady, W_WIDTH - 150 - stringWidth, 40);
-            g2.drawString("Lettuce: " + lettuceReady, W_WIDTH - 150 - stringWidth, 60);
-            g2.drawString("Tomato: " + tomatoReady, W_WIDTH - 150 - stringWidth, 80);
-            g2.drawString("Corn: " + cornReady, W_WIDTH - 150 - stringWidth, 100);
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));
+            g2.drawString("" + carrotReady, W_WIDTH - 85 - stringWidth, 60);
+            g2.drawString("" + lettuceReady, W_WIDTH - 148 - stringWidth, 60);
+            g2.drawString("" +  tomatoReady, W_WIDTH - 148 - stringWidth, 100);
+            g2.drawString("" + cornReady, W_WIDTH - 85 - stringWidth, 100);
 
             AffineTransform treeSet = g2.getTransform();
             g2.translate(-100, -100);
@@ -278,6 +301,8 @@ public class GardenPanel extends JPanel implements ActionListener {
 
             g2.setTransform(originalTransform);
 
+            pausePlayButton.drawButton(g2);
+
             if(paused){
                 for(int i = 0; i < screens.size(); i++){
                     if(screens.get(i) instanceof PausedScreen){
@@ -286,16 +311,29 @@ public class GardenPanel extends JPanel implements ActionListener {
                 }   
             }
 
-            pausePlayButton.drawButton(g2);
+            
 
         }else if(gameState == 3){
-               // sellingScreen.drawSellingScreen(g2);
+
+            sellingScreen.drawScreen(g2);
+            backButton.drawButton(g2);
+            increaseCarrot.drawButton(g2);
+            increaseLettuce.drawButton(g2);
+            increaseCorn.drawButton(g2);
+            increaseTomato.drawButton(g2);
+            decreaseCarrot.drawButton(g2);
+            decreaseCorn.drawButton(g2);
+            decreaseLettuce.drawButton(g2);
+            decreaseTomato.drawButton(g2);
+
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));
+            g2.setColor(Color.black);
+            g2.drawString("" + carrotsSell, W_WIDTH / 2 + 65, 310);
+            g2.drawString("" + tomatoSell, W_WIDTH / 2 + 65, 370);
+            g2.drawString("" + cornSell, W_WIDTH / 2 + 65, 430);
+            g2.drawString("" + lettuceSell, W_WIDTH / 2 + 65, 485);
+               
         }else if(gameState == 4){
-            for(int i = 0; i < screens.size(); i++){
-                if(screens.get(i) instanceof ConfirmScreen){
-                    screens.get(i).drawScreen(g2);
-                }
-            }   
         }
     }
     
@@ -304,7 +342,9 @@ public class GardenPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if(gameState == 2){
+            
             boolean instructionsDisplayed = false;
+            
             for(int i = 0; i < DirtArr.size(); i++){
                 Dirt currentDirt = DirtArr.get(i);
     
@@ -365,6 +405,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                     if (currentDirt.getDirtState() == 0) {
                         if (currentDirt.isColliding(pick)) {
                             currentDirt.setDirtImg(1);
+                            Sound.play("assets/grass2.wav");
                         }
                     }
         
@@ -462,16 +503,17 @@ public class GardenPanel extends JPanel implements ActionListener {
                     DirtArr.get(i).addDay();
                 }
             }
-
-            pausePlayButton.update();
         }
 
         if(carrotReady > 12 || lettuceReady > 12 || tomatoReady > 12 || cornReady > 12){
             if(sellButton == null){
-                sellButton = creatorFactory.createIconButton(W_WIDTH / 2 - 100, 20, "Sell Crops", "sellButton");
+                sellButton = creatorFactory.createIconButton(W_WIDTH - 358 , 27, "Sell Crops", "sellButton");
                 repaint();
             }
         }
+
+        pausePlayButton.update();
+
 
         repaint();
     }
@@ -500,6 +542,15 @@ public class GardenPanel extends JPanel implements ActionListener {
                         repaint();
                     }
                    }
+                }
+            }
+
+            if(sellButton != null){
+                if(sellButton.clicked(mouseX,mouseY)){
+                    createSellingScreen();
+                    gameState = 3;
+                    timer.stop();
+                    repaint();
                 }
             }
 
@@ -544,6 +595,59 @@ public class GardenPanel extends JPanel implements ActionListener {
                         }
                     }
                 }  
+            }
+
+            // CARROT
+            if(increaseCarrot.clicked(mouseX, mouseY)){
+                if(carrotsSell >= 0 && carrotsSell < carrotReady){
+                    carrotsSell++;
+                }
+            }
+            if(decreaseCarrot.clicked(mouseX, mouseY)){
+                if(carrotsSell > 0 && carrotsSell <= carrotReady){
+                    carrotsSell--;
+                }
+            }
+
+            // TOMATO
+            if(increaseTomato.clicked(mouseX, mouseY)){
+                if(tomatoSell >= 0 && tomatoSell < tomatoReady){
+                    tomatoSell++;
+                }
+            }
+            if(decreaseTomato.clicked(mouseX, mouseY)){
+                if(tomatoSell > 0 && tomatoSell <= tomatoReady){
+                    tomatoSell--;
+                }
+            }
+
+            // CORN
+            if(increaseCorn.clicked(mouseX, mouseY)){
+                if(cornSell >= 0 && cornSell < cornReady){
+                    cornSell++;
+                }
+            }
+            if(decreaseCorn.clicked(mouseX, mouseY)){
+                if(cornSell > 0 && cornSell <= cornReady){
+                    cornSell--;
+                }
+            }
+
+            // LETTUCE
+            if(increaseLettuce.clicked(mouseX, mouseY)){
+                if(lettuceSell >= 0 && lettuceSell < lettuceReady){
+                    lettuceSell++;
+                }
+            }
+            if(decreaseLettuce.clicked(mouseX, mouseY)){
+                if(lettuceSell > 0 && lettuceSell <= lettuceReady){
+                    lettuceSell--;
+                }
+            }            
+            
+
+            if(gameState == 3){
+
             }
         
             if (gameState == 2) {
@@ -608,4 +712,19 @@ public class GardenPanel extends JPanel implements ActionListener {
         newFrame.add(new GardenPanel(newFrame));
         newFrame.setVisible(true);
     }
+
+    private void createSellingScreen(){
+        sellingScreen = creatorFactory.createScreen("selling", W_WIDTH, W_HEIGHT);
+
+        backButton = creatorFactory.createIconButton(50, 50, "Back", "backButton");
+        increaseCarrot = creatorFactory.createIconButton(W_WIDTH /2 + 100, 285, "+", "increase");
+        increaseLettuce = creatorFactory.createIconButton(W_WIDTH /2 + 100, 460, "+", "increase");
+        increaseCorn = creatorFactory.createIconButton(W_WIDTH /2 + 100, 405, "+", "increase");
+        increaseTomato = creatorFactory.createIconButton(W_WIDTH /2 + 100, 345, "+", "increase");
+        decreaseCarrot = creatorFactory.createIconButton(W_WIDTH /2 - 10, 285, "-", "decrease");
+        decreaseLettuce = creatorFactory.createIconButton(W_WIDTH /2 - 10, 460, "-", "decrease");
+        decreaseCorn = creatorFactory.createIconButton(W_WIDTH /2 - 10, 405, "-", "decrease");
+        decreaseTomato = creatorFactory.createIconButton(W_WIDTH /2 - 10, 345, "-", "decrease");
+    }
+
 }

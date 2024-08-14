@@ -23,6 +23,7 @@ import ui.Instructions;
 import ui.IntoScreen;
 import ui.PausedScreen;
 import ui.ScreenClass;
+import ui.SellingScreen;
 import ui.VegeShow;
 
 public class CreatorFactory {
@@ -63,6 +64,8 @@ public class CreatorFactory {
             screen = new InstructionScreen(x, y);
         }else if(type == "confirm"){
             screen = new ConfirmScreen(x, y);
+        }else if(type == "selling"){
+            screen = new SellingScreen(x, y);
         }
 
         return screen;
@@ -97,6 +100,8 @@ public class CreatorFactory {
         }else if(type == "sellButton"){
             button = new IconButton(x,y, text);
         }else if(type == " "){
+            button = new IconButton(x,y, text);
+        }else{
             button = new IconButton(x,y, text);
         }
 
