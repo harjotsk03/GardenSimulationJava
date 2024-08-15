@@ -17,6 +17,7 @@ import sidebar.SimpleSidebar;
 import sidebar.Tomato;
 import sidebar.WaterCan;
 import ui.ConfirmScreen;
+import ui.EndingScreen;
 import ui.IconButton;
 import ui.InstructionScreen;
 import ui.Instructions;
@@ -66,6 +67,8 @@ public class CreatorFactory {
             screen = new ConfirmScreen(x, y);
         }else if(type == "selling"){
             screen = new SellingScreen(x, y);
+        }else if(type == "ending"){
+            screen = new EndingScreen(x, y);
         }
 
         return screen;
@@ -100,6 +103,8 @@ public class CreatorFactory {
         }else if(type == "sellButton"){
             button = new IconButton(x,y, text);
         }else if(type == " "){
+            button = new IconButton(x,y, text);
+        }else if(type == "endScreen"){
             button = new IconButton(x,y, text);
         }else{
             button = new IconButton(x,y, text);

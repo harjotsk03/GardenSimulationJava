@@ -33,4 +33,12 @@ public class ScreenClass implements elementInterface{
     public boolean cancelClick(double mouseX, double mouseY) {
         return false;
     }
+
+    public boolean clickedPlayAgain(double mouseX, double mouseY) {
+        return false;        
+    }
+
+    public boolean clickedContinue(double mouseX, double mouseY) {
+        return false;
+    }
 }

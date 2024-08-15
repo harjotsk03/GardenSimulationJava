@@ -12,54 +12,56 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class IconButton implements elementInterface{
+public class Alert {
 
     private PVector pos;
     private BufferedImage img;
     private double scaleX;
     private double scaleY;
     private String text;
+    private long creationTime; // Time when the alert was created
+    private static final long DISPLAY_DURATION_MS = 5000; // 5 seconds
+    private boolean active; // State of the alert
     private Font customFont;
 
-    public IconButton(int x, int y, String text) {
+    public Alert(int x, int y, String text) {
         loadCustomFont();
         this.pos = new PVector(x, y);
         this.img = ImageLoader.loadImage("assets/instructionsBG.png");
-        this.scaleX = 0.23;
-        this.scaleY = 0.3;
-
-        if(text == "Sell Crops"){
-            this.scaleX = 0.2;
-            this.scaleY = 0.3;
-        }else if(text == "+" || text == "-"){
-            this.scaleX = 0.1;
-            this.scaleY = 0.3;
-        }else if(text == "Play Again" || text == "Continue"){
-            this.scaleX = 0.4;
-            this.scaleY = 0.5;
-        }else if(text == "Help"){
-            this.scaleX = 0.1;
-            this.scaleY = 0.3;
-        }
+        this.scaleX = 1;
+        this.scaleY = 0.7;
         this.text = text;
+        this.creationTime = System.currentTimeMillis(); // Set the creation time
+        this.active = true; // Alert is active initially
+    }
+
+    public boolean isActive() {
+        // Check if the alert should still be active
+        if (System.currentTimeMillis() - creationTime > DISPLAY_DURATION_MS) {
+            this.active = false; // Mark alert as inactive
+        }
+        return this.active;
     }
 
     public void drawButton(Graphics2D g2) {
+        if (!isActive()) {
+            // Alert is no longer active, do not draw
+            return;
+        }
+
         // Save the original transform and font state
         AffineTransform originalTransform = g2.getTransform();
         Font originalFont = g2.getFont();
         
-        // Apply transformations for the image
         g2.translate(this.pos.x, this.pos.y);
         g2.scale(scaleX, scaleY);
         g2.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), null);
         
-        // Restore the font and transform state before drawing text
         g2.setTransform(originalTransform);
-        if(this.text == "+" || this.text == "-"){
-            g2.setFont(customFont.deriveFont(Font.PLAIN, 20)); 
-        }else{
-            g2.setFont(customFont.deriveFont(Font.PLAIN, 14));
+        if (this.text.equals("+") || this.text.equals("-")) {
+            g2.setFont(customFont.deriveFont(Font.PLAIN, 20));
+        } else {
+            g2.setFont(customFont.deriveFont(Font.PLAIN, 20));
         }
         g2.setColor(Color.BLACK);
 
@@ -68,28 +70,14 @@ public class IconButton implements elementInterface{
         int stringHeight = g2.getFontMetrics().getHeight();
         int textX = (int) (this.pos.x + (img.getWidth() * scaleX) / 2 - stringWidth / 2);
         int textY = 0;
-        if(this.text == "+" || this.text == "-"){
+        if (this.text.equals("+") || this.text.equals("-")) {
             textY = (int) (this.pos.y + (img.getHeight() * scaleY) / 2 + stringHeight / 2 - 6);
-        }else{
+        } else {
             textY = (int) (this.pos.y + (img.getHeight() * scaleY) / 2 + stringHeight / 2 - 3);
         }
 
         // Draw the text
         g2.drawString(this.text, textX, textY);
-    }
-
-
-    @Override
-    public boolean clicked(double x, double y) {
-        int scaledWidth = (int) (img.getWidth() * scaleX);
-        int scaledHeight = (int) (img.getHeight() * scaleY);
-        
-        double left = this.pos.x;
-        double right = this.pos.x + scaledWidth;
-        double top = this.pos.y;
-        double bottom = this.pos.y + scaledHeight;
-
-        return x > left && x < right && y > top && y < bottom;
     }
 
     private void loadCustomFont() {

@@ -245,6 +245,8 @@ public class Dirt extends GardenObject {
             Sound.play("assets/netherwart4.wav");
         }else if(isColliding && !wasColliding && state == 1 && vegetableState == 0){
             Sound.play("assets/grass2.wav");
+        }else if(isColliding && !wasColliding && state == 1 && growthStage == 3){
+            Sound.play("assets/successful_hit.wav");
         }
         
         wasColliding = isColliding;

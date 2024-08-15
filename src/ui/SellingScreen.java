@@ -23,6 +23,6 @@ public class SellingScreen extends ScreenClass{
 
     @Override
     public boolean clicked(double x, double y) {
-        return x > 500 && x < 800 && y > 600 && y < 750;
+        return x > 510 && x < 760 && y > 610 && y < 700;
     }
 }
