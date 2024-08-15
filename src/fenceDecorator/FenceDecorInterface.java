@@ -1,3 +1,7 @@
+/*
+ * This is our interface for our decorator pattern
+ */
+
 package fenceDecorator;
 
 import java.awt.Graphics2D;

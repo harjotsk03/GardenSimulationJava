@@ -1,3 +1,7 @@
+/* 
+ * This is a class to create custom buttons I used throughout the application
+ */
+
 package ui;
 
 import processing.core.PVector;

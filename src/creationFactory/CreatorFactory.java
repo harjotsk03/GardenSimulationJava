@@ -1,3 +1,5 @@
+/* This is the class for creation of all my major objects. */
+
 package creationFactory;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import ui.VegeShow;
 
 public class CreatorFactory {
     
+    // method for creating sidebar tools
     public SidebarTool createSidebarOject(String type, int x, int y, double scale){
         SidebarTool sideBarObject = null;
         if(type == "pick"){
@@ -54,6 +57,7 @@ public class CreatorFactory {
         return null;
     }
 
+    // method for creating screens of various types
     public ScreenClass createScreen(String type, int x, int y){
         ScreenClass screen = null;
 
@@ -74,21 +78,25 @@ public class CreatorFactory {
         return screen;
     }
 
+    // method for creating garden, the background
     public Garden createGarden(String img){
         Garden garden;
         garden = new Garden("assets/garden.png");
         return garden;
     }
 
+
     public Instructions createInstruction(String instruction, String icon, int x, int y){
         return null;
     }
 
+    // method for creating the sidebar
     public SimpleSidebar createSideBar(int x, int y, double scale){
         SimpleSidebar sidebar;
         return sidebar = new SimpleSidebar(x, y, scale);
     }
 
+    // method for creating icon buttons
     public IconButton createIconButton(int x, int y, String text, String type){
         IconButton button = null;
 
@@ -113,18 +121,21 @@ public class CreatorFactory {
         return button;
     }
 
+    // method for creating the fence decorator
     public FenceDecorInterface createFenceDecorObect(int x, int y){
         FenceDecorInterface fence = null;
         fence = new SimpleFence(x, y);
         return fence;
     }
 
+    // method for creating arrays 
     public ArrayList createArrayList(){
         ArrayList arrayList = new ArrayList<>();
 
         return arrayList;
     }
 
+    // method for creating the UI in the top right corner for showing how many veggies we have
     public VegeShow createVegeUI(int x, int y, int scale){
         VegeShow showUI = null;
 

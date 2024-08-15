@@ -1,3 +1,7 @@
+/*
+ * This is a class to display alerts for 5 seconds wherever they are needed in the main panel
+ */
+
 package ui;
 
 import processing.core.PVector;

@@ -1,3 +1,7 @@
+/*
+ * This is the main panel, where we control all actions
+ */
+
 package main;
 
 import java.awt.Color;
@@ -38,6 +42,7 @@ import sidebar.Shovel;
 import sidebar.SidebarTool;
 import sidebar.SimpleSidebar;
 import sidebar.Tomato;
+import sidebar.Water;
 import sidebar.WaterCan;
 import garden.Dirt;
 import garden.Fence;
@@ -52,7 +57,6 @@ import ui.IntoScreen;
 import ui.PausedScreen;
 import ui.ScreenClass;
 import ui.SellingScreen;
-import ui.Sun;
 import ui.VegeShow;
 
 import javax.swing.Icon;
@@ -70,6 +74,7 @@ public class GardenPanel extends JPanel implements ActionListener {
     private double mouseX;
     private double mouseY;
 
+    // create factory
     private CreatorFactory creatorFactory;
 
     private Garden garden;
@@ -86,29 +91,42 @@ public class GardenPanel extends JPanel implements ActionListener {
     private SidebarTool lettuce;
     private SidebarTool waterCan;
     private Sparkle cloud = null;
-    private Sun sun;
 
+    // spacing for the sidebar elements
     private int sidebarX = W_WIDTH - 60;
     private int sidebarYStart = 200;
     private int spacing = 75;
 
+    // for night and day
     private int light = 0;
     private boolean isDay = true;
+    // for controling the time of the day
     private int timeOfDay = 600;
     private Timer timer;
+    // day variable
     private int day = 1;
+
+    // for spalshing when waterCan is active
+    private Water water = null;
 
     private VegeShow showUIArea;
     private Alert alert = null;
 
+    // MAIN FSM for handling game state and show various things
     private int gameState = 0;
 
+    // bool for if user watered that day
     private boolean hasWatered = false;
+    // bool for if user has prepped any places for planting
     private boolean hasDug = false;
+    // bool for if user has planted anywhere
     private boolean hasPlanted = false;
+    // bool if we have a tool in hand
     private boolean toolActive = false;
+    // bool for if we are ready to harvest ,if any crops are in final state
     private boolean readyToHarvest = false;
 
+    // for controlling how many crops we harvest
     private int carrotReady;
     private int lettuceReady;
     private int cornReady;
@@ -120,17 +138,20 @@ public class GardenPanel extends JPanel implements ActionListener {
     private IconButton bagsDecorButton;
     private IconButton fullFenceButton;
 
-    private boolean seePrices = false;
+    // bool for showing crop prices and grow time
+    private boolean seePrices = true;
 
     private IconButton sellButton = null;
 
     private IconButton beginGame;
+    private IconButton restartGameBtn;
 
     private boolean drawSparkle = false;
 
     @SuppressWarnings("unused")
     private Minim minim;
 
+    // array of screens
     private ArrayList<ScreenClass> screens;
 
     private ScreenClass introScreen;
@@ -174,6 +195,8 @@ public class GardenPanel extends JPanel implements ActionListener {
     private Instructions cornPricesShow;
     private Instructions lettucePricesShow;
 
+    private boolean showSellAllow = false;
+
     private IconButton helpButton;
     private IconButton closeHelpButton;
 
@@ -203,8 +226,7 @@ public class GardenPanel extends JPanel implements ActionListener {
         digger = creatorFactory.createSidebarOject("digger", sidebarX, sidebarYStart + (6 * spacing), 0.7);
 
         showUIArea = creatorFactory.createVegeUI(W_WIDTH - 250, 25, 1);
-        sun = new Sun();
-
+        
         DirtArr = creatorFactory.createArrayList();
         FenceArr = creatorFactory.createArrayList();
         screens = creatorFactory.createArrayList();
@@ -213,6 +235,7 @@ public class GardenPanel extends JPanel implements ActionListener {
         closeHelpButton = creatorFactory.createIconButton(20, 50, "Close", "button");
         
         beginGame = creatorFactory.createIconButton(W_WIDTH - 130, W_HEIGHT - 60, "BEGIN", "beginButton");
+        restartGameBtn = creatorFactory.createIconButton(W_WIDTH - 140, W_HEIGHT - 50, "RESTART", "beginButton");
 
         createGarden(4, 3);
 
@@ -229,6 +252,7 @@ public class GardenPanel extends JPanel implements ActionListener {
         cornReady = 0;
         tomatoReady = 0;
 
+        // factory creating screens
         screens.add(creatorFactory.createScreen("intro", W_WIDTH, W_HEIGHT));
         screens.add(creatorFactory.createScreen("instruction", W_WIDTH, W_HEIGHT));
         screens.add(creatorFactory.createScreen("confirm", W_WIDTH, W_HEIGHT));
@@ -236,6 +260,7 @@ public class GardenPanel extends JPanel implements ActionListener {
         
         sellButton = creatorFactory.createIconButton(W_WIDTH - 358 , 27, "Sell Crops", "sellButton");
 
+        // factory creats decor buttons
         emptyFenceButton = creatorFactory.createIconButton(40, W_HEIGHT - 180, "Empty Fence", "emptyFence");
         woodDecorButton = creatorFactory.createIconButton(40, W_HEIGHT - 140, "Add Wood", "addWood");
         bagsDecorButton = creatorFactory.createIconButton(40, W_HEIGHT - 100, "Add Bags", "addBags");
@@ -247,8 +272,6 @@ public class GardenPanel extends JPanel implements ActionListener {
         tomatoPricesShow = new Instructions(W_WIDTH - 230, 300 - 50, "Tomato\nValue: $1.60/each\nGrowth Time: 4 Days", "shovel");
 
         fence = creatorFactory.createFenceDecorObect(300, W_HEIGHT - 100);
-
-        
 
         timer = new Timer(30, this);
 
@@ -263,13 +286,16 @@ public class GardenPanel extends JPanel implements ActionListener {
 
         AffineTransform originalTransform = g2.getTransform();
 
+        // OPENING SCREEN
         if (gameState == 0) {
             for(int i = 0; i < screens.size(); i++){
                 if(screens.get(i) instanceof IntoScreen){
                     screens.get(i).drawScreen(g2);
                 }
             }
-        } else if (gameState == 1) {
+        } 
+        // INSTRUCTIONS SCREEN
+        else if (gameState == 1) {
             for(int i = 0; i < screens.size(); i++){
                 if(screens.get(i) instanceof InstructionScreen){
                     screens.get(i).drawScreen(g2);
@@ -278,6 +304,7 @@ public class GardenPanel extends JPanel implements ActionListener {
 
             beginGame.drawButton(g2);
         }else if(gameState == 2){
+            // GAME
 
             garden.drawGarden(g2);
             for (Dirt dirt : DirtArr) {
@@ -298,6 +325,9 @@ public class GardenPanel extends JPanel implements ActionListener {
             carrot.drawObject(g2);
             lettuce.drawObject(g2);
             corn.drawObject(g2);
+            if(water != null){
+                water.drawWater(g2);
+            }
             waterCan.drawObject(g2);
             digger.drawObject(g2);        
 
@@ -337,6 +367,11 @@ public class GardenPanel extends JPanel implements ActionListener {
             g2.drawString("" +  tomatoReady, W_WIDTH - 148 - 50, 100);
             g2.drawString("" + cornReady, W_WIDTH - 85 - 50, 100);
 
+            moneyMade = Math.abs(moneyMade);
+            g.setFont(customFont.deriveFont(Font.PLAIN, 12));
+            String formattedMoneyMade = String.format("%.2f", moneyMade);
+            g2.drawString("$"+formattedMoneyMade, W_WIDTH - 90, 95);
+
             AffineTransform treeSet = g2.getTransform();
             g2.translate(-100, -100);
             g2.scale(0.5, 0.5);
@@ -357,6 +392,7 @@ public class GardenPanel extends JPanel implements ActionListener {
 
         }else if(gameState == 3){
 
+            //SELLING SCREEN
             sellingScreen.drawScreen(g2);
             backButton.drawButton(g2);
             increaseCarrot.drawButton(g2);
@@ -376,11 +412,12 @@ public class GardenPanel extends JPanel implements ActionListener {
             g2.drawString("" + lettuceSell, W_WIDTH / 2 + 65, 485);
             totalPrice = Math.abs(totalPrice);
             String formattedPrice = String.format("%.2f", totalPrice);
-            g2.drawString(formattedPrice, W_WIDTH / 2, 600);
+            g2.drawString("$"+formattedPrice, W_WIDTH / 2, 600);
                
         }else if(gameState == 4){
         }else if(gameState == 5){
 
+            // END SCREEN
             for(int i = 0; i < screens.size(); i++){
                 if(screens.get(i) instanceof EndingScreen){
                     screens.get(i).drawScreen(g2);
@@ -390,7 +427,7 @@ public class GardenPanel extends JPanel implements ActionListener {
             g.setFont(customFont.deriveFont(Font.PLAIN, 30));
             moneyMade = Math.abs(moneyMade);
             String formattedMoneyMade = String.format("%.2f", moneyMade);
-            g2.drawString("You made a total of " + formattedMoneyMade, W_WIDTH / 2 - 180, W_HEIGHT/2);
+            g2.drawString("You made a total of " + "$"+formattedMoneyMade, W_WIDTH / 2 - 180, W_HEIGHT/2);
 
             if(endScreenContinueButton != null){
 
@@ -403,12 +440,14 @@ public class GardenPanel extends JPanel implements ActionListener {
             endScreenContinueButton.drawButton(g2);
             endScreenPlayAgainButton.drawButton(g2);
         }else if(gameState == 6){
+            // HELP SCREEN
             for(int i = 0; i < screens.size(); i++){
                 if(screens.get(i) instanceof InstructionScreen){
                     screens.get(i).drawScreen(g2);
                 }
             }
             closeHelpButton.drawButton(g2);
+            restartGameBtn.drawButton(g2);
         }
 
         if(alert != null){
@@ -569,7 +608,10 @@ public class GardenPanel extends JPanel implements ActionListener {
             }
 
             if(carrotReady > 12 || tomatoReady > 12 || cornReady > 12 || lettuceReady > 12){
-                alert = new Alert(W_WIDTH/2 - 200, 50, "You can now sell your crops!");
+                if(!showSellAllow){
+                    alert = new Alert(W_WIDTH/2 - 200, 50, "You can now sell your crops!");
+                    showSellAllow = true;
+                }
             }
     
             if(timeOfDay == 0){
@@ -594,8 +636,10 @@ public class GardenPanel extends JPanel implements ActionListener {
             mouseX = e.getX();
             mouseY = e.getY();
 
+            // if we are on instructions screen we start game 
             if(gameState == 1){
                 if(beginGame.clicked(mouseX, mouseY)){
+                    alert = new Alert(W_WIDTH/2 - 200, 50, "CTRL + CLICK TO CLOSE PRICES!");
                     Sound.play("assets/pop.wav");
                     gameState = 2;
                     timer.start();
@@ -603,6 +647,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                 }
             }
         
+            // if we are on open screen we get taken to instructions screen
             if(gameState==0){
                 for(int i = 0 ; i < screens.size(); i++){
                    if(screens.get(i) instanceof IntoScreen) {
@@ -626,6 +671,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                 }
             }
 
+            // if we click sell button either we go to sell screen or get alert
             if(sellButton != null){
                 if(sellButton.clicked(mouseX,mouseY)){
                     if(carrotReady > 12 || lettuceReady > 12 || tomatoReady > 12 || cornReady > 12){
@@ -641,6 +687,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                 }
             }
 
+            // decorator pattern code
             if(emptyFenceButton.clicked(mouseX, mouseY)){
                 Sound.play("assets/pop.wav");
                 fence = new SimpleFence(300, W_HEIGHT - 100);
@@ -658,21 +705,8 @@ public class GardenPanel extends JPanel implements ActionListener {
                 fence = new WoodDecor(300, W_HEIGHT - 100, baseFence);
             }
 
-            if(gameState == 4){
-                for(int i = 0; i < screens.size(); i++){
-                    if(screens.get(i) instanceof ConfirmScreen){
-                        if(confirmScreen.confirmClick(mouseX, mouseY)){
-                            Sound.play("assets/pop.wav");
-                            restartApplication();
-                        }else if(confirmScreen.cancelClick(mouseX, mouseY)){
-                            Sound.play("assets/pop.wav");
-                            gameState = 2;
-                            repaint();
-                        }
-                    }
-                }  
-            }
-
+            
+            // if we are on sell screen handle increase and decrease of veggies
             if(gameState == 3){
 
                 if(backButton.clicked(mouseX, mouseY)){
@@ -753,6 +787,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                     }
                 }         
                 
+                // handle clicking on sell button
                 if(sellingScreen.clicked(mouseX, mouseY)){
                     Sound.play("assets/pop.wav");
                     carrotReady -= carrotsSell;
@@ -760,13 +795,14 @@ public class GardenPanel extends JPanel implements ActionListener {
                     cornReady -= cornSell;
                     tomatoReady -= tomatoSell;
                     gameState = 5;
-                    moneyMade = totalPrice;
+                    moneyMade = totalPrice + moneyMade;
                     endScreenPlayAgainButton = creatorFactory.createIconButton(375, 500, "Play Again", "endScreen");
                     endScreenContinueButton = creatorFactory.createIconButton(670, 500, "Continue", "endScreen");
                     repaint();
                 }
             }
 
+            // if we are in final screen we can either restart or continue
             if(gameState == 5){
                 if(endScreenContinueButton.clicked(mouseX, mouseY)){
                     Sound.play("assets/pop.wav");
@@ -780,7 +816,6 @@ public class GardenPanel extends JPanel implements ActionListener {
                     restartApplication();
                 }
             }
-
             if(gameState == 2){
                 if(helpButton.clicked(mouseX, mouseY)){
                     gameState = 6;
@@ -789,11 +824,15 @@ public class GardenPanel extends JPanel implements ActionListener {
                 }
             }
 
+            // this is the instructions screen during the game
             if(gameState == 6){
                 if(closeHelpButton.clicked(mouseX,mouseY)){
                     gameState = 2;
                     timer.start();
                     repaint();
+                }
+                if(restartGameBtn.clicked(mouseX, mouseY)){
+                    restartApplication();
                 }
             }
         
@@ -803,6 +842,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                     instructions = null;
                 }
 
+                // if we click and control we close the showing of prices and growth time
                 if(e.isControlDown()){
                     seePrices = !seePrices;
                     if(makePriceSound){
@@ -810,6 +850,7 @@ public class GardenPanel extends JPanel implements ActionListener {
                     }
                 }
         
+                //  call the movement of our sidebar tools
                 moveTool(pick, e, sidebarYStart);
                 moveTool(tomato, e, sidebarYStart + spacing);
                 moveTool(carrot, e, sidebarYStart + (2 * spacing));
@@ -817,6 +858,8 @@ public class GardenPanel extends JPanel implements ActionListener {
                 moveTool(corn, e, sidebarYStart + (4 * spacing));
                 moveTool(waterCan, e, sidebarYStart + (5 * spacing));
                 moveTool(digger, e, sidebarYStart + (6 * spacing));
+
+
             }
         }
     }
@@ -825,12 +868,17 @@ public class GardenPanel extends JPanel implements ActionListener {
         public void mouseMoved(MouseEvent e) {
             mouseX = e.getX();
             mouseY = e.getY();
+
+            if(water != null){
+                water.updatePosition(mouseX, mouseY);
+            }
         }
     }
 
 
 
 
+    // generate our gardens 
     private void createGarden(int col, int row) {
         int widthBetween = 250;
         int heightBetween = 200;
@@ -843,6 +891,7 @@ public class GardenPanel extends JPanel implements ActionListener {
 
     }
 
+    // method for moving and releeasing the sidebar tools
     private void moveTool(SidebarTool object, MouseEvent e, float height) {
         if (object.clicked(mouseX, mouseY)) {
             if (e.isShiftDown()) {
@@ -850,17 +899,24 @@ public class GardenPanel extends JPanel implements ActionListener {
                 Sound.play("assets/ladder2.wav");
                 object.setMouseFollowing(false);
                 object.setPos(W_WIDTH - 60, height);
+                if(object == waterCan){
+                    water = null;
+                }
             } else {
                 if(!toolActive){
                     toolActive = true;
                     Sound.play("assets/ladder1.wav");
                     object.setMouseFollowing(true);
                     object.setPos(mouseX, mouseY);
+                    if(object == waterCan){
+                        water = new Water(sidebarX, sidebarYStart + (5 * spacing));
+                    }
                 }
             }
         }
     }
 
+    // method for restarting the game
     private void restartApplication() {
         frame.dispose();
 
@@ -872,6 +928,7 @@ public class GardenPanel extends JPanel implements ActionListener {
         newFrame.setVisible(true);
     }
 
+    // method for creating the selling screen
     private void createSellingScreen(int carrotReady, int lettuceReady, int cornReady, int tomatoReady){
         sellingScreen = creatorFactory.createScreen("selling", W_WIDTH, W_HEIGHT);
 
@@ -891,6 +948,8 @@ public class GardenPanel extends JPanel implements ActionListener {
         decreaseTomato = creatorFactory.createIconButton(W_WIDTH /2 - 10, 345, "-", "decrease");
     }
 
+
+    // method for loading custom font
     private void loadCustomFont() {
         try {
             customFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/IrishGrover-Regular.ttf")).deriveFont(40f);

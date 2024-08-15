@@ -1,3 +1,7 @@
+/*
+ * Abstract class for our garden objects, fence, and dirt
+ */
+
 package garden;
 
 import java.awt.Graphics2D;

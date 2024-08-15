@@ -1,3 +1,7 @@
+/*
+ * This is the Perlin Noise class, here we create sparkles to use when our crops are ready for harvest 
+ */
+
 package garden;
 
 import java.awt.*;

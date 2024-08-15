@@ -1,3 +1,7 @@
+/*
+ * This is the main class that deals with all the drawing, handling, and controlling of our gardens and what they are growing
+ */
+
 package garden;
 
 import java.awt.Graphics2D;
@@ -22,6 +26,7 @@ public class Dirt extends GardenObject {
     private Sparkle cloud = null;
     private boolean wasColliding; // Track the previous collision state
     
+    // array of images for each vegetable
     private BufferedImage[] carrotImages = new BufferedImage[5];
     private BufferedImage[] tomatoImages = new BufferedImage[5];
     private BufferedImage[] cornImages = new BufferedImage[5];
@@ -70,6 +75,7 @@ public class Dirt extends GardenObject {
             calculateGrowthStage(currentDay);
         }
 
+        // create the sparkles if we get to the final stage of growth to indicate done
         if(growthStage == 3){
             cloud = new Sparkle(pos.x, pos.y);
         }else if(growthStage == 4){
@@ -80,22 +86,23 @@ public class Dirt extends GardenObject {
     }
 
     private void updateVegetableDetails() {
+        // FSM for controlling which vegetable is grown and what we need to draw and flick through
         switch (vegetableState) {
             case 1:
                 vegetable = "carrot";
-                daysToGrow = 0;
+                daysToGrow = 2;
                 break;
             case 2:
                 vegetable = "tomato";
-                daysToGrow = 4;
+                daysToGrow = 3;
                 break;
             case 3:
                 vegetable = "corn";
-                daysToGrow = 5;
+                daysToGrow = 4;
                 break;
             case 4:
                 vegetable = "lettuce";
-                daysToGrow = 3;
+                daysToGrow = 2;
                 break;
         }
 
@@ -106,6 +113,7 @@ public class Dirt extends GardenObject {
     }
 
     private BufferedImage getInitialImageForVegetable() {
+        // depending on the FSM above we will start with the initial draw image of the vege
         switch (vegetable) {
             case "carrot":
                 return carrotImages[0];
@@ -120,6 +128,7 @@ public class Dirt extends GardenObject {
         }
     }
 
+    // method for calculation how many days it has been growing and what stage we are at of growth
     private void calculateGrowthStage(int currentDay) {
         int daysLeftToGrow = daysToGrow - (currentDay - dateOfPlant);
         if(growthStage < 4){
@@ -140,6 +149,7 @@ public class Dirt extends GardenObject {
     }
 
     private void updateCurrentImage() {
+        // draw and switch the images of the vege based on the growth stage
         switch (vegetable) {
             case "carrot":
                 currentImage = carrotImages[growthStage];
@@ -181,6 +191,7 @@ public class Dirt extends GardenObject {
         }
     }
 
+    // method to handle the state and wether or not we can plant 
     public void setDirtImg(int dirtState) {
         if (dirtState == 0) {
             this.state = 0;

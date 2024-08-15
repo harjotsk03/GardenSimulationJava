@@ -1,3 +1,7 @@
+/*
+ * This is the class that handles creating the bags for the decorator pattern
+ */
+
 package fenceDecorator;
 
 import java.awt.Graphics2D;

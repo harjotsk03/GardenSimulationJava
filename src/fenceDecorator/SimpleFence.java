@@ -1,3 +1,7 @@
+/*
+ * This is the class that create our simple empty fence
+ */
+
 package fenceDecorator;
 
 import java.awt.Graphics2D;

@@ -1,3 +1,7 @@
+/*
+ * This is the class for drawing the fences around the dirt
+ */
+
 package garden;
 
 import java.awt.Color;

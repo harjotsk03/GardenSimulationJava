@@ -1,3 +1,7 @@
+/*
+ * Abstract class for creating our sidebar tool objects
+ */
+
 package sidebar;
 
 import java.awt.Graphics2D;

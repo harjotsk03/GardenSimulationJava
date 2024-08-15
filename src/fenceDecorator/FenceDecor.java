@@ -1,3 +1,7 @@
+/*
+ * This is the base fence decor class that starts our decoration
+ */
+
 package fenceDecorator;
 
 import java.awt.Graphics2D;

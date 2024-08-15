@@ -1,3 +1,7 @@
+/*
+ * Class for drawing the background
+ */
+
 package garden;
 
 import java.awt.*;
