@@ -1,0 +1,43 @@
+This is a README file for Harjot Singhs Garden Simulation for IAT 265 
+
+PERLIN NOISE
+Sparkle.java: this class draws a sparkle on top of the crops in order to display the crops are ready for harvesting
+
+FRACTAL RECOURSION
+Water.java: this class draws an animation using recoursion and perlin noise to look like water is splashing when we use the watering can
+
+APPROPRIATE ANIMATION
+GardenPanel.java: in this class I used a light variable and timeOfDay variable to control the time and make it go to night and back to day during 20:00 and 4:00
+
+DECORATOR PATTER
+GardenPanel.java & src/fenceDecortaor package: these files and classes control the FSM and creation for the decorator pattern there are two features, wood and bags
+
+SOUNDS
+Each interaction has a sound effect
+
+INTRO 
+There is an intro screen and an instructions screen showing how to play the game
+
+There are 4+ packages organized based on features and sorted logically 
+
+All classes follow strict encapsulation, I have one use of an abstract class with two subclasses of this, and I also have an interface that hold multiple subclasses that impliment that interface
+
+Furthermore, I have multiple uses of ArrayLists to hold subclass objects in the superclass typed array list, eg are Screens and SideBarTools in the GardenPanel
+
+There is no redundency in my code with sub-super classes
+
+ECO POINTS:
+
+Smart day and night shift, not only is it implimented, but its used to grow certain vegetables over longer periods of time and the day-night cycle has a reason, a use and is meaningful
+
+Sensible and Intelligent FSM is used in Dirt.java where I use FSM to control and dynamically draw specific vegetables depending on what interacts with that dirt object, I think this is a very good and inteligent use of FSM to control what we draw and how we draw it so it makes code more readable and maintainable
+
+I implimented alerts into my application, I think this deserves ECO points as its not a required thing but it improves playability and UI UX so it should get some points
+
+I implimented a pause and help state to the game to allow users to remind themselves of how to play and to pause if needed, again not asked for but implimentned to improve UI and UX
+
+I also implimented smart tracking, so when we sell the crops, we get the money, loose the crops from the simulation, and are able to keep playing to earn more money, and to reharvest on the same dirt we used previously, I think this is well implimented and is very good to a game of this kind
+
+I also belive I should get some for using not just recorsion but recoursive fractal perlin noise in one class to make a water animation
+
+Finally, I have a preferred decorator pattern that isnt just instantiated at runtime but rather is dynamic with buttons and is interactive

@@ -1,5 +1,7 @@
 /*
  * This is a class to display alerts for 5 seconds wherever they are needed in the main panel
+ * 
+ * ECO POINTS FOR IMPLIMENTING THIS AT ALL AS IT IMPROVES UI AND UX
  */
 
 package ui;

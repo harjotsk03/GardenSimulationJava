@@ -1,3 +1,8 @@
+/*
+ * ECO POINTS HERE FOR USING RECOURSION AND USING PERLIN NOISE IN ONE INSTANCE
+ */
+
+
 package sidebar;
 
 import java.awt.Graphics2D;

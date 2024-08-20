@@ -1,5 +1,7 @@
 /*
  * This is the main class that deals with all the drawing, handling, and controlling of our gardens and what they are growing
+ * 
+ * ECO POINTS HERE FOR USE OF SMART INTELLIGENT FSM, AND FOR DYANMICALY DRAWING IMAGES USING ARRAYS AND SPRITES
  */
 
 package garden;

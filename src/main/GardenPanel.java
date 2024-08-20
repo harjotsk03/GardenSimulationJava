@@ -81,15 +81,17 @@ public class GardenPanel extends JPanel implements ActionListener {
     private ArrayList<Dirt> DirtArr;
     private ArrayList<Fence> FenceArr;
 
+    private ArrayList<SidebarTool> sidebarTools;
+
     private Instructions instructions = null;
     private SimpleSidebar sidebar;
-    private SidebarTool pick;
-    private SidebarTool tomato;
-    private SidebarTool carrot;
-    private SidebarTool digger;
-    private SidebarTool corn;
-    private SidebarTool lettuce;
-    private SidebarTool waterCan;
+    // private SidebarTool pick;
+    // private SidebarTool tomato;
+    // private SidebarTool carrot;
+    // private SidebarTool digger;
+    // private SidebarTool corn;
+    // private SidebarTool lettuce;
+    // private SidebarTool waterCan;
     private Sparkle cloud = null;
 
     // spacing for the sidebar elements
@@ -212,18 +214,22 @@ public class GardenPanel extends JPanel implements ActionListener {
         loadCustomFont();
 
         creatorFactory = new CreatorFactory();
+        sidebarTools = creatorFactory.createArrayList();
 
         garden = creatorFactory.createGarden("assets/garden.png");
 
         sidebar = creatorFactory.createSideBar(W_WIDTH - 60, W_HEIGHT / 2, 1);
 
-        pick = creatorFactory.createSidebarOject("pick", sidebarX, sidebarYStart, 0.7);
-        tomato = creatorFactory.createSidebarOject("tomato", sidebarX, sidebarYStart + spacing, 0.9);
-        carrot = creatorFactory.createSidebarOject("carrot", sidebarX, sidebarYStart + (2 * spacing), 1);
-        lettuce = creatorFactory.createSidebarOject("lettuce", sidebarX, sidebarYStart + (3 * spacing), 1);
-        corn = creatorFactory.createSidebarOject("corn", sidebarX, sidebarYStart + (4 * spacing), 1);
-        waterCan = creatorFactory.createSidebarOject("watercan", sidebarX, sidebarYStart + (5 * spacing), 1);
-        digger = creatorFactory.createSidebarOject("digger", sidebarX, sidebarYStart + (6 * spacing), 0.7);
+        
+        sidebarTools.add(creatorFactory.createSidebarOject("pick", sidebarX, sidebarYStart, 0.7)); 
+        sidebarTools.add(creatorFactory.createSidebarOject("tomato", sidebarX, sidebarYStart + spacing, 0.9));
+        sidebarTools.add(creatorFactory.createSidebarOject("carrot", sidebarX, sidebarYStart + (2 * spacing), 1));
+        sidebarTools.add(creatorFactory.createSidebarOject("lettuce", sidebarX, sidebarYStart + (3 * spacing), 1));
+        sidebarTools.add(creatorFactory.createSidebarOject("corn", sidebarX, sidebarYStart + (4 * spacing), 1));
+        sidebarTools.add(creatorFactory.createSidebarOject("watercan", sidebarX, sidebarYStart + (5 * spacing), 1));
+        sidebarTools.add(creatorFactory.createSidebarOject("digger", sidebarX, sidebarYStart + (6 * spacing), 0.7));
+
+        
 
         showUIArea = creatorFactory.createVegeUI(W_WIDTH - 250, 25, 1);
         
@@ -320,16 +326,27 @@ public class GardenPanel extends JPanel implements ActionListener {
             g2.fillRect(0, 0, W_WIDTH, W_HEIGHT);
 
             sidebar.drawSidebar(g2);
-            pick.drawObject(g2);
-            tomato.drawObject(g2);
-            carrot.drawObject(g2);
-            lettuce.drawObject(g2);
-            corn.drawObject(g2);
-            if(water != null){
+
+            // Draw water first
+            if (water != null) {
                 water.drawWater(g2);
             }
-            waterCan.drawObject(g2);
-            digger.drawObject(g2);        
+
+            // Draw items from sidebarTools
+            for (int i = 0; i < sidebarTools.size(); i++) {
+                // Check if the current item is a WaterCan
+                if (sidebarTools.get(i) instanceof WaterCan) {
+                    // Draw WaterCan after all other items
+                    sidebarTools.get(i).drawObject(g2);
+                }
+            }
+
+            // Draw the rest of the sidebarTools (excluding WaterCan)
+            for (int i = 0; i < sidebarTools.size(); i++) {
+                if (!(sidebarTools.get(i) instanceof WaterCan)) {
+                    sidebarTools.get(i).drawObject(g2);
+                }
+            }    
 
             emptyFenceButton.drawButton(g2);
             woodDecorButton.drawButton(g2);
@@ -492,67 +509,90 @@ public class GardenPanel extends JPanel implements ActionListener {
                 instructionsDisplayed = true; // Set the flag to true once instructions are displayed
             }
     
-                if (pick.getMouseFollowing()) {
-                    pick.setPos(mouseX, mouseY);
+                for(int i = 0; i < sidebarTools.size() ; i++){
+                    if (sidebarTools.get(i).getMouseFollowing()) {
+                        sidebarTools.get(i).setPos(mouseX, mouseY);
+                    }
                 }
-                if (tomato.getMouseFollowing()) {
-                    tomato.setPos(mouseX, mouseY);
-                }
-                if (carrot.getMouseFollowing()) {
-                    carrot.setPos(mouseX, mouseY);
-                }
-                if (digger.getMouseFollowing()) {
-                    digger.setPos(mouseX, mouseY);
-                }
-                if (corn.getMouseFollowing()) {
-                    corn.setPos(mouseX, mouseY);
-                }
-                if (lettuce.getMouseFollowing()) {
-                    lettuce.setPos(mouseX, mouseY);
-                }
-                if (waterCan.getMouseFollowing()) {
-                    waterCan.setPos(mouseX, mouseY);
-                }
+                
+                // if (tomato.getMouseFollowing()) {
+                //     tomato.setPos(mouseX, mouseY);
+                // }
+                // if (carrot.getMouseFollowing()) {
+                //     carrot.setPos(mouseX, mouseY);
+                // }
+                // if (digger.getMouseFollowing()) {
+                //     digger.setPos(mouseX, mouseY);
+                // }
+                // if (corn.getMouseFollowing()) {
+                //     corn.setPos(mouseX, mouseY);
+                // }
+                // if (lettuce.getMouseFollowing()) {
+                //     lettuce.setPos(mouseX, mouseY);
+                // }
+                // if (waterCan.getMouseFollowing()) {
+                //     waterCan.setPos(mouseX, mouseY);
+                // }
         
             for (int i = 0; i < DirtArr.size(); i++) {
                     Dirt currentDirt = DirtArr.get(i);
                     currentDirt.update();
         
                     if (currentDirt.getDirtState() == 0) {
-                        if (currentDirt.isColliding(pick)) {
-                            currentDirt.setDirtImg(1);
+                        for(int j = 0 ; j < sidebarTools.size(); j ++){
+                            if(sidebarTools.get(j) instanceof Shovel){
+                                SidebarTool pick = sidebarTools.get(j);
+                                if (currentDirt.isColliding(pick)) {
+                                    currentDirt.setDirtImg(1);
+                                }
+                            }
                         }
                     }
         
                     if (currentDirt.getGrowthStage() == 3) {
-                        if (currentDirt.isColliding(digger)) {
-                            currentDirt.setGrowthStage(4);
-                            readyToHarvest = false;
-                            if(currentDirt.getVegetableState() == 1){
-                                carrotReady ++;
-                            }else if(currentDirt.getVegetableState() == 2){
-                                tomatoReady ++;
-                            }else if(currentDirt.getVegetableState() == 3){
-                                cornReady ++;
-                            }else if(currentDirt.getVegetableState() == 4){
-                                lettuceReady ++;
+                        for(int l = 0; l < sidebarTools.size() ; l++){
+                            if(sidebarTools.get(l) instanceof Digger){
+                                SidebarTool digger = sidebarTools.get(l);
+                                if (currentDirt.isColliding(digger)) {
+                                    currentDirt.setGrowthStage(4);
+                                    readyToHarvest = false;
+                                    if(currentDirt.getVegetableState() == 1){
+                                        carrotReady ++;
+                                    }else if(currentDirt.getVegetableState() == 2){
+                                        tomatoReady ++;
+                                    }else if(currentDirt.getVegetableState() == 3){
+                                        cornReady ++;
+                                    }else if(currentDirt.getVegetableState() == 4){
+                                        lettuceReady ++;
+                                    }
+                                }
                             }
                         }
                     }
         
                     if (currentDirt.getDirtState() == 1) {
-                        if (currentDirt.isColliding(carrot)) {
-                            currentDirt.setVegetableState(1);
-                            currentDirt.setDayOfPlant(day);
-                        } else if (currentDirt.isColliding(tomato)) {
-                            currentDirt.setVegetableState(2);
-                            currentDirt.setDayOfPlant(day);
-                        } else if (currentDirt.isColliding(corn)) {
-                            currentDirt.setVegetableState(3);
-                            currentDirt.setDayOfPlant(day);
-                        } else if (currentDirt.isColliding(lettuce)) {
-                            currentDirt.setVegetableState(4);
-                            currentDirt.setDayOfPlant(day);
+                        for(int k = 0 ; k < sidebarTools.size(); k++){
+                            if(sidebarTools.get(k) instanceof Carrot){
+                                if (currentDirt.isColliding(sidebarTools.get(k))) {
+                                    currentDirt.setVegetableState(1);
+                                    currentDirt.setDayOfPlant(day);
+                                }
+                            }else if (sidebarTools.get(k) instanceof Tomato){
+                                if (currentDirt.isColliding(sidebarTools.get(k))) {
+                                    currentDirt.setVegetableState(2);
+                                    currentDirt.setDayOfPlant(day);
+                                } 
+                            }else if (sidebarTools.get(k) instanceof Corn){
+                                if (currentDirt.isColliding(sidebarTools.get(k))) {
+                                    currentDirt.setVegetableState(3);
+                                    currentDirt.setDayOfPlant(day);
+                                }
+                            }else if(sidebarTools.get(k) instanceof Lettuce){
+                                if (currentDirt.isColliding(sidebarTools.get(k))) {
+                                    currentDirt.setVegetableState(4);
+                                    currentDirt.setDayOfPlant(day);
+                                }   
+                            }
                         }
                     }
                 }
@@ -837,9 +877,13 @@ public class GardenPanel extends JPanel implements ActionListener {
             }
         
             if (gameState == 2) {
-                if (waterCan.clicked(mouseX, mouseY)) {
-                    hasWatered = true;
-                    instructions = null;
+                for(int i = 0; i < sidebarTools.size(); i++){
+                    if(sidebarTools.get(i) instanceof WaterCan){
+                        if (sidebarTools.get(i).clicked(mouseX, mouseY)) {
+                            hasWatered = true;
+                            instructions = null;
+                        }
+                    }
                 }
 
                 // if we click and control we close the showing of prices and growth time
@@ -851,14 +895,24 @@ public class GardenPanel extends JPanel implements ActionListener {
                 }
         
                 //  call the movement of our sidebar tools
-                moveTool(pick, e, sidebarYStart);
-                moveTool(tomato, e, sidebarYStart + spacing);
-                moveTool(carrot, e, sidebarYStart + (2 * spacing));
-                moveTool(lettuce, e, sidebarYStart + (3 * spacing));
-                moveTool(corn, e, sidebarYStart + (4 * spacing));
-                moveTool(waterCan, e, sidebarYStart + (5 * spacing));
-                moveTool(digger, e, sidebarYStart + (6 * spacing));
 
+                for(int k = 0 ; k < sidebarTools.size(); k++){
+                            if(sidebarTools.get(k) instanceof Carrot){
+                                moveTool(sidebarTools.get(k), e, sidebarYStart + (2 * spacing));
+                            }else if (sidebarTools.get(k) instanceof Tomato){
+                                moveTool(sidebarTools.get(k), e, sidebarYStart + spacing);
+                            }else if (sidebarTools.get(k) instanceof Corn){
+                                moveTool(sidebarTools.get(k), e, sidebarYStart + (4 * spacing));
+                            }else if(sidebarTools.get(k) instanceof Lettuce){
+                                moveTool(sidebarTools.get(k), e, sidebarYStart + (3 * spacing));
+                            }else if(sidebarTools.get(k) instanceof Shovel){
+                                moveTool(sidebarTools.get(k), e, sidebarYStart);
+                            }else if(sidebarTools.get(k) instanceof Digger){
+                                moveTool(sidebarTools.get(k), e, sidebarYStart + (6 * spacing));
+                            }else if(sidebarTools.get(k) instanceof WaterCan){
+                                moveTool(sidebarTools.get(k), e, sidebarYStart + (5 * spacing));
+                            }
+                }
 
             }
         }
@@ -899,8 +953,12 @@ public class GardenPanel extends JPanel implements ActionListener {
                 Sound.play("assets/ladder2.wav");
                 object.setMouseFollowing(false);
                 object.setPos(W_WIDTH - 60, height);
-                if(object == waterCan){
-                    water = null;
+                for(int i = 0; i < sidebarTools.size(); i++){
+                    if(sidebarTools.get(i) instanceof WaterCan){
+                        if(object == sidebarTools.get(i)){
+                            water = null;
+                        }
+                    }
                 }
             } else {
                 if(!toolActive){
@@ -908,8 +966,12 @@ public class GardenPanel extends JPanel implements ActionListener {
                     Sound.play("assets/ladder1.wav");
                     object.setMouseFollowing(true);
                     object.setPos(mouseX, mouseY);
-                    if(object == waterCan){
-                        water = new Water(sidebarX, sidebarYStart + (5 * spacing));
+                    for(int i = 0; i < sidebarTools.size(); i++){
+                    if(sidebarTools.get(i) instanceof WaterCan){
+                            if(object == sidebarTools.get(i)){
+                                water = new Water(sidebarX, sidebarYStart + (5 * spacing));
+                            }
+                        }
                     }
                 }
             }

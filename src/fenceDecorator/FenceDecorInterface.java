@@ -1,6 +1,9 @@
 /*
  * This is our interface for our decorator pattern
+ * 
+ * ECO POINTS HERE FOR PREFERRED DECORATOR PATTERN
  */
+
 
 package fenceDecorator;
 
